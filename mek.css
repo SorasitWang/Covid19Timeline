@@ -1,0 +1,44 @@
+.navbar-inverse{
+    min-width: 200px;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+  #mainbg {
+      min-height:700px; 
+      display: flex ; 
+      justify-content: center;
+      background-color:rgb(184, 196, 247);
+  }
+  #form{
+      border-radius: 10px;
+      background-color:white;
+      margin-top: 20px;
+      margin-bottom: 0px;
+      padding: 25px;
+      max-width:1000px;
+  }
+  .form-control:hover{
+      transform: scale(1.05);
+  }
+  .form-group{
+      padding:3px;
+      margin-left:15px;
+      display:inline-block;
+      margin-bottom: 15;
+      vertical-align: middle
+  }
+  form{
+          display:block;
+  }
+  #headsearch{
+      margin-bottom:0;
+  }
+  #subsearch{
+      max-height:20px;
+  
+  }
+  .wrapper{
+  width:200px;
+  padding:20px;
+  height: 150px;
+  }

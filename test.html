@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+          <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+           crossorigin=""/>
+          <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+           integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+           crossorigin=""></script>
+          
+        <style>
+            #mapid { height: 800px; }
+        </style>
+    </head>
+   
+    <body>
+        <form class='form-control'>
+            <input type='text' id='prov' oninput="myFunction()" placeholder='เขต'>
+            หรือ
+            <input type='date' id='date' oninput="myFunction()">
+            <a href='mek.php'>Back to main</a>
+        </form>
+        <div id="mymodal" class="modal" style='background-color: rgb(0,0,0);  background-color: rgba(0,0,0,0.5); ' >
+            <div class="modal-dialog" >
+              <!-- Modal content-->
+                <div class="modal-content" style='min-height:500px'>
+                    <div class="modal-header">
+                      <span class="close">&times;</span>
+                      <h4 class="modal-title text-center" id='promodal'></h4>
+                    </div>
+                    <div class="modal-body" id='contmodal' style='height:100%'>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mapid" class='leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom' style='position:relative ; outline:none;'></div>
+         
+        <script type="text/javascript" src='thai.js'></script>
+        <script>
+           var pro = "";
+           var date ="" ,modal , head , count , cont ;
+           function highlightFeature(e) {
+                var la = e.target;
+                la.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+            
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    la.bringToFront();
+                }
+               var v = L.polyline(e.target.feature.geometry.coordinates[0][0]);
+               var center = v.getBounds().getCenter();
+               if (pro=="" && date==""){
+                    var popup = L.popup()
+                .setLatLng(L.latLng(center.lng,center.lat))
+                .setContent(e.target.feature.properties.NAME_2 + "  " + e.target.feature.properties.NAME_1).openOn(map);
+               }
+               else if (date==""){
+                   var popup = L.popup()
+                .setLatLng(L.latLng(center.lng,center.lat))
+                .setContent(e.target.feature.properties.NAME_2 + "  " + e.target.feature.properties.NAME_1 + " "
+                + count.reduce(function(acc, val) { return parseInt(acc) + parseInt(val); }) + " เคส")
+                .openOn(map);
+               }
+               else if (pro==""){
+                var popup = L.popup()
+                .setLatLng(L.latLng(center.lng,center.lat))
+                .setContent(e.target.feature.properties.NAME_2 + "  " + e.target.feature.properties.NAME_1 + " "
+                + count[head.indexOf(e.target.feature.properties.NAME_2)] + " เคส")
+                .openOn(map);
+               }
+            }
+            
+            function resetHighlight(e) {
+                layer.resetStyle(e.target);
+            }
+           
+           var modal = document.getElementById("mymodal");
+
+            var span = document.getElementsByClassName("close")[0];
+            
+            span.onclick = function() {
+              modal.style.display = "none";
+            }
+            
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+              if (event.target == modal) {
+                modal.style.display = "none";
+              }
+            }
+            
+             function showdata(e){
+                modal.style.display = "block";
+                document.getElementById("promodal").innerHTML  = e.target.feature.properties.NAME_2 ;
+                document.getElementById("contmodal").innerHTML = "";
+                if (date==""){
+                     for (var i=0;i<count.length;i++){
+                         var datetime = head[i].slice(4,6) + " / " +  head[i].slice(2,4) + " / 20" + head[i].slice(0,2)
+                         document.getElementById("contmodal").innerHTML += '<h4>'+datetime +'</h4>';
+                         for (var j=0;j<count[i];j++){
+                             document.getElementById("contmodal").innerHTML += '<p>&emsp;'+cont[i+j]+'</p>';
+                         }
+                         document.getElementById("contmodal").innerHTML += '<br>';
+                        
+                    }
+                }
+                else{
+                var temp = head.indexOf(e.target.feature.properties.NAME_2) ;
+                    for (var i=0;i<count[temp];i++){
+                        document.getElementById("contmodal").innerHTML += '<p>'+cont[temp+i]+'</p>';
+                    }
+                }
+                 
+               
+            }
+           function onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: showdata
+                });
+            }
+            
+            function myFunction() {
+              pro = document.getElementById("prov").value;
+              date = document.getElementById("date").value;
+                
+                
+               var xmlhttp = new XMLHttpRequest();
+               var arr = "";
+               var tmp ;
+               var i =0;
+                xmlhttp.onreadystatechange = function() {
+                  if (this.readyState == 4 && this.status == 200) {
+                      layerGroup.removeLayer(layer);
+                      arr = this.responseText;
+                      tmp = arr.split("/")
+                      head = tmp[0].split(',');
+                      count = tmp[1].split(',');
+                      cont = tmp[2].split(',');
+                      while (head[i]) {
+                          head[i] = head[i].trim();
+                          count[i] = count[i].trim();
+                          cont[i] = cont[i].trim();
+                          i++;
+                    }
+                 
+                      layer = L.geoJson(statesData,{
+                                 filter:   function(feature, layer){
+                                  if (pro == "" && feature.properties.NAME_1 == 'Bangkok Metropolis'){
+                                        return true;
+                                      
+                                  }
+                                  if (date == "" &&  feature.properties.NAME_2 == pro){
+                                      return true;
+                                  }
+                                  if (head.includes(feature.properties.NAME_2.valueOf())){
+                                        return true;
+                                    }
+                                    return false;
+                            }
+                                ,onEachFeature: onEachFeature
+                            });
+                        layerGroup.addLayer(layer);
+                        layerGroup.addTo(map);
+                  }
+                 }; 
+                        xmlhttp.open("GET", "get1.php?province=" + pro + "&date="+date, true);
+                        xmlhttp.send();
+                        
+                 
+               
+            }
+        
+        var map = L.map('mapid').setView([37.8, -96], 4);
+        map.panTo([13.708861, 100.567682]);
+        map.zoomIn(7);
+        /*function onMapClick(e) {
+            alert("You clicked the map at " + e.latlng);
+        }
+        map.on('click', onMapClick);*/
+        
+        
+        var layerGroup = new L.LayerGroup();
+        layerGroup.addTo(map);
+        
+
+      L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic29yYXNpdCIsImEiOiJja2o5cnEzMmwwMWEyMnRudXRndGpzN3oxIn0.FwevgopjyrKV387lgZM1ww', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1
+      }).addTo(map);
+      
+      
+        
+        var layer = L.geoJson(statesData,{
+             filter:   function(feature, layer){
+              if (feature.properties.NAME_1 != 'กรุงเทพ' ){
+                    return false;
+                }
+                return true;
+        }
+            ,onEachFeature: onEachFeature
+        }).addTo(map);
+        
+        layerGroup.addLayer(layer);
+       
+        
+        </script>
+            
+            
+        
+ 
+  
+    </body>
+    
+    
+    
+    
+</html>
