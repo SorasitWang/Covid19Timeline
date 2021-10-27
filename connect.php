@@ -1,9 +1,9 @@
     
     <?php
         $servername = 'localhost';
-        $username = 'id15753850_root';
-        $password = 'aA_123456789';
-        $dbname = 'id15753850_main';
+        $username = 'id17832799_root';
+        $password = 'h[{X_[R^tX]1me]Z';
+        $dbname = 'id17832799_coide19timeline';
         $conn = mysqli_connect($servername, $username, $password, $dbname);
         if (!$conn) {
         	die("Connection : failed (เชื่อมต่อฐานข้อมูล ไม่ สำเร็จ)" . mysqli_connect_error());

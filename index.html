@@ -24,7 +24,7 @@
             <input type='text' id='prov' oninput="myFunction()" placeholder='เขต'>
             หรือ
             <input type='date' id='date' oninput="myFunction()">
-            <a href='mek.php'>Back to main</a>
+            <a href='main.php'>Back to main</a>
         </form>
         <div id="mymodal" class="modal" style='background-color: rgb(0,0,0);  background-color: rgba(0,0,0,0.5); ' >
             <div class="modal-dialog" >
@@ -176,7 +176,7 @@
                         layerGroup.addTo(map);
                   }
                  }; 
-                        xmlhttp.open("GET", "get1.php?province=" + pro + "&date="+date, true);
+                        xmlhttp.open("GET", "getData.php?province=" + pro + "&date="+date, true);
                         xmlhttp.send();
                         
                  

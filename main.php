@@ -39,16 +39,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-  <link rel="stylesheet" type = "text/css" href = "mek.css">
+  <link rel="stylesheet" type = "text/css" href = "main.css">
   
 </head>
 <body>
     <div id="nav-placeholder"></div>
-    <script>
-      $(function(){
-        $("#nav-placeholder").load("navbar.php");
-      });
-    </script>
+   
     <script  src='getapi.js'></script>
     </script>
     <div style='background-color:rgb(243,240,240) ; min-height:700px ; padding:20px'>
@@ -88,7 +84,7 @@
              </div>
              <div class='form-group' style='margin-top:10px; width:200px;height:170px;'>
                 <br>
-                 <button type="button" class="btn btn-warning"><a href='test.html'><span class='glyphicon glyphicon-leaf
+                 <button type="button" class="btn btn-warning"><a href='index.html'><span class='glyphicon glyphicon-leaf
                  '></span> Go to map</a></button>
             </div>
             
