@@ -73,10 +73,14 @@
                 .openOn(map);
                }
                else if (pro==""){
+                   var c = 0
+                for (let i = 0; i < head.length; i++) {
+                    if (head[i]==e.target.feature.properties.NAME_2) c += parseInt(count[i]);
+                }
                 var popup = L.popup()
                 .setLatLng(L.latLng(center.lng,center.lat))
                 .setContent(e.target.feature.properties.NAME_2 + "  " + e.target.feature.properties.NAME_1 + " "
-                + count[head.indexOf(e.target.feature.properties.NAME_2)] + " เคส")
+                + c + " เคส")
                 .openOn(map);
                }
             }
